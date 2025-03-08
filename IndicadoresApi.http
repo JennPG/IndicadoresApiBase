@@ -1,0 +1,6 @@
+@IndicadoresApi_HostAddress = http://localhost:5178
+
+GET {{IndicadoresApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
