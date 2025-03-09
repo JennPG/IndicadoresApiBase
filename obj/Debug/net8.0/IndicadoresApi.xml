@@ -11,11 +11,10 @@
             </summary>
             <returns>Un mensaje JSON con información de la API.</returns>
         </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.Listar(System.String,System.String)">
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.Listar(System.String)">
             <summary>
             Obtiene todos los registros de una tabla específica en la base de datos.
             </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
             <param name="nombreTabla">Nombre de la tabla a consultar.</param>
             <returns>Lista de registros en formato JSON si la consulta es exitosa, o un código de error en caso de fallo.</returns>
             <response code="200">Devuelve la lista de registros de la tabla.</response>
@@ -24,11 +23,10 @@
             <response code="409">Error de restricción en la base de datos (clave foránea o clave duplicada).</response>
             <response code="500">Error interno del servidor.</response>
         </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.ObtenerPorClave(System.String,System.String,System.String,System.String)">
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.ObtenerPorClave(System.String,System.String,System.String)">
             <summary>
             Obtiene un registro específico de una tabla, basado en una clave y su valor.
             </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
             <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
             <param name="nombreClave">Nombre de la columna clave utilizada para la búsqueda.</param>
             <param name="valor">Valor de la clave para filtrar el registro.</param>
@@ -38,23 +36,10 @@
             <response code="404">No se encontró el registro con el valor especificado.</response>
             <response code="500">Error interno del servidor.</response>
         </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.Crear(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Crea un nuevo registro en la tabla especificada con los datos proporcionados.
-            </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
-            <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
-            <param name="datosEntidad">Diccionario con los datos de la entidad a insertar.</param>
-            <returns>Un mensaje de éxito si la inserción es correcta, o un código de error en caso de fallo.</returns>
-            <response code="200">Devuelve un mensaje indicando que la entidad fue creada exitosamente.</response>
-            <response code="400">El nombre de la tabla o los datos de la entidad están vacíos.</response>
-            <response code="500">Error interno del servidor.</response>
-        </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.Actualizar(System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.Actualizar(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Actualiza un registro específico en la tabla de la base de datos basado en una clave y su valor.
             </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
             <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
             <param name="nombreClave">Nombre de la columna clave utilizada para la búsqueda.</param>
             <param name="valorClave">Valor de la clave para identificar el registro a actualizar.</param>
@@ -64,24 +49,10 @@
             <response code="400">El nombre de la tabla, la clave o los datos de la entidad están vacíos.</response>
             <response code="500">Error interno del servidor.</response>
         </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.Eliminar(System.String,System.String,System.String,System.String)">
-            <summary>
-            Elimina un registro específico de la tabla de la base de datos basado en una clave y su valor.
-            </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
-            <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
-            <param name="nombreClave">Nombre de la columna clave utilizada para identificar el registro.</param>
-            <param name="valorClave">Valor de la clave que identifica el registro a eliminar.</param>
-            <returns>Un mensaje de éxito si la eliminación es correcta, o un código de error en caso de fallo.</returns>
-            <response code="200">Devuelve un mensaje indicando que la entidad fue eliminada exitosamente.</response>
-            <response code="400">El nombre de la tabla o el nombre de la clave están vacíos.</response>
-            <response code="500">Error interno del servidor.</response>
-        </member>
-        <member name="M:IndicadoresApi.Controllers.EntidadesController.VerificarContrasena(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.VerificarContrasena(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Verifica si la contraseña proporcionada coincide con la contraseña almacenada en la base de datos para un usuario específico.
             </summary>
-            <param name="nombreProyecto">Nombre del proyecto al que pertenece la tabla.</param>
             <param name="nombreTabla">Nombre de la tabla en la base de datos que almacena los usuarios.</param>
             <param name="datos">Diccionario con los campos necesarios para la verificación:
             <list type="bullet">
@@ -98,6 +69,17 @@
             <response code="401">La contraseña es incorrecta.</response>
             <response code="500">Error interno del servidor.</response>
         </member>
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.Crear(System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Crea un nuevo registro en la tabla especificada con los datos proporcionados.
+            </summary>
+            <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
+            <param name="datosEntidad">Diccionario con los datos de la entidad a insertar.</param>
+            <returns>Un mensaje de éxito si la inserción es correcta, o un código de error en caso de fallo.</returns>
+            <response code="200">Devuelve un mensaje indicando que la entidad fue creada exitosamente.</response>
+            <response code="400">El nombre de la tabla o los datos de la entidad están vacíos.</response>
+            <response code="500">Error interno del servidor.</response>
+        </member>
         <member name="M:IndicadoresApi.Controllers.EntidadesController.EjecutarConsultaParametrizada(System.Text.Json.JsonElement)">
             <summary>
             Ejecuta una consulta SQL parametrizada recibida en el cuerpo de la solicitud.
@@ -108,6 +90,18 @@
             <response code="400">La consulta SQL no es válida o está vacía.</response>
             <response code="404">No se encontraron resultados para la consulta proporcionada.</response>
             <response code="500">Error en la base de datos o error interno del servidor.</response>
+        </member>
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.Eliminar(System.String,System.String,System.String)">
+            <summary>
+            Elimina un registro específico de la tabla de la base de datos basado en una clave y su valor.
+            </summary>
+            <param name="nombreTabla">Nombre de la tabla en la base de datos.</param>
+            <param name="nombreClave">Nombre de la columna clave utilizada para identificar el registro.</param>
+            <param name="valorClave">Valor de la clave que identifica el registro a eliminar.</param>
+            <returns>Un mensaje de éxito si la eliminación es correcta, o un código de error en caso de fallo.</returns>
+            <response code="200">Devuelve un mensaje indicando que la entidad fue eliminada exitosamente.</response>
+            <response code="400">El nombre de la tabla o el nombre de la clave están vacíos.</response>
+            <response code="500">Error interno del servidor.</response>
         </member>
     </members>
 </doc>

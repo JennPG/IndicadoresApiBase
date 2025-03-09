@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "n0Ft9WzSB01Juzq+HAmifgFQbeseNlTn4XTuMjG1UiE=",
+  "Hash": "YB1n8lG1i1UuW0Oaj+E041jqvSSH3Ojj2yN7BYvRtUI=",
   "Source": "IndicadoresApi",
   "BasePath": "_content/IndicadoresApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }
