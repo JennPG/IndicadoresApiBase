@@ -167,3 +167,4 @@ C:\proyectos\ServiciosWeb2\IndicadoresApi\IndicadoresApiBase\obj\Debug\net8.0\In
 C:\proyectos\ServiciosWeb2\IndicadoresApi\IndicadoresApiBase\obj\Debug\net8.0\IndicadoresApi.pdb
 C:\proyectos\ServiciosWeb2\IndicadoresApi\IndicadoresApiBase\obj\Debug\net8.0\IndicadoresApi.genruntimeconfig.cache
 C:\proyectos\ServiciosWeb2\IndicadoresApi\IndicadoresApiBase\obj\Debug\net8.0\ref\IndicadoresApi.dll
+C:\proyectos\ServiciosWeb2\IndicadoresApi\IndicadoresApiBase\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

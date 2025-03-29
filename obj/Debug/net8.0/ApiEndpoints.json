@@ -1,0 +1,174 @@
+[
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "Inicio",
+    "RelativePath": "",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "Listar",
+    "RelativePath": "api/{nombreTabla}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "Crear",
+    "RelativePath": "api/{nombreTabla}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "datosEntidad",
+        "Type": "System.Collections.Generic.Dictionary\u00602[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "ObtenerPorClave",
+    "RelativePath": "api/{nombreTabla}/{nombreClave}/{valor}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "nombreClave",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "valor",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "Actualizar",
+    "RelativePath": "api/{nombreTabla}/{nombreClave}/{valorClave}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "nombreClave",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "valorClave",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "datosEntidad",
+        "Type": "System.Collections.Generic.Dictionary\u00602[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "Eliminar",
+    "RelativePath": "api/{nombreTabla}/{nombreClave}/{valorClave}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "nombreClave",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "valorClave",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "EjecutarConsultaParametrizada",
+    "RelativePath": "api/{nombreTabla}/ejecutar-consulta-parametrizada",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cuerpoSolicitud",
+        "Type": "System.Text.Json.JsonElement",
+        "IsRequired": true
+      },
+      {
+        "Name": "nombreTabla",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IndicadoresApi.Controllers.EntidadesController",
+    "Method": "VerificarContrasena",
+    "RelativePath": "api/{nombreTabla}/verificar-contrasena",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombreTabla",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "datos",
+        "Type": "System.Collections.Generic.Dictionary\u00602[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

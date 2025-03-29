@@ -714,6 +714,120 @@ namespace IndicadoresApi.Controllers
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}"); // Retorna un error 500 si ocurre una excepción.
             }
         }
+    /// <summary>
+    /// Ejecuta un procedimiento almacenado con los parámetros proporcionados.
+    /// </summary>
+    /// <param name="parametrosSP">Diccionario con el nombre del SP y sus parámetros.</param>
+    /// <returns>Los resultados del procedimiento almacenado o un mensaje de error.</returns>
+    /// <response code="200">Devuelve los resultados del procedimiento almacenado.</response>
+    /// <response code="400">El nombre del SP no está especificado o los parámetros son inválidos.</response>
+    /// <response code="500">Error al ejecutar el procedimiento almacenado.</response>
+    [AllowAnonymous]
+    [HttpPost("ejecutar-sp")]
+    public IActionResult EjecutarProcedimientoAlmacenado(
+        [FromBody] Dictionary<string, object> parametrosSP)
+    {
+        if (parametrosSP == null || !parametrosSP.ContainsKey("nombreSP"))
+        {
+            return BadRequest("Debe proporcionar el nombre del SP y sus parámetros.");
+        }
+
+        try
+        {
+            // 1. Validar y obtener el nombre del SP
+            if (!parametrosSP.TryGetValue("nombreSP", out object? nombreSPObj) || nombreSPObj == null)
+            {
+                return BadRequest("El parámetro 'nombreSP' es requerido.");
+            }
+            string nombreSP = nombreSPObj.ToString()!;
+
+            // 2. Convertir parámetros (manejar JsonElement para 'productos')
+            var parametros = new Dictionary<string, object>();
+            foreach (var kvp in parametrosSP)
+            {
+                if (kvp.Key == "nombreSP") continue;
+
+                if (kvp.Value is JsonElement jsonElement)
+                {
+                    // Convertir JsonElement a string y eliminar escapes adicionales
+                    string jsonString = jsonElement.GetRawText();
+                    
+                    // Eliminar comillas iniciales y finales (si existen)
+                    if (jsonString.StartsWith("\"") && jsonString.EndsWith("\""))
+                    {
+                        jsonString = jsonString.Substring(1, jsonString.Length - 2);
+                    }
+                    
+                    // Reemplazar escapes de comillas dobles
+                    jsonString = jsonString.Replace("\\\"", "\""); // Elimina las barras invertidas escapadas
+                    
+                    parametros[kvp.Key] = jsonString;
+                }
+                else
+                {
+                    parametros[kvp.Key] = kvp.Value;
+                }
+            }
+
+            // Buscar campos de contraseña y encriptarlos
+            var clavesContrasena = new[] { "password", "contrasena", "passw", "clave" };
+            
+            foreach (var key in parametros.Keys.ToList())
+            {
+                // Comprobar si el nombre del parámetro parece ser una contraseña
+                if (clavesContrasena.Any(pk => key.IndexOf(pk, StringComparison.OrdinalIgnoreCase) >= 0))
+                {
+                    var contrasenaPlano = parametros[key]?.ToString();
+                    if (!string.IsNullOrEmpty(contrasenaPlano))
+                    {
+                        // Encriptar la contraseña
+                        parametros[key] = BCrypt.Net.BCrypt.HashPassword(contrasenaPlano);
+                        Console.WriteLine($"Contraseña encriptada para el parámetro: {key}");
+                    }
+                }
+            }
+
+            // 3. Ejecutar el SP
+            controlConexion.AbrirBd();
+            using (var comando = new SqlCommand(nombreSP, controlConexion.ObtenerConexion() as SqlConnection))
+            {
+                comando.CommandType = CommandType.StoredProcedure;
+
+                // Agregar parámetros al comando
+                foreach (var param in parametros)
+                {
+                    comando.Parameters.AddWithValue(
+                        $"@{param.Key}", 
+                        param.Value ?? DBNull.Value
+                    );
+                }
+
+                // Ejecutar y obtener resultados
+                var resultado = new DataTable();
+                using (var adaptador = new SqlDataAdapter(comando))
+                {
+                    adaptador.Fill(resultado);
+                }
+
+                controlConexion.CerrarBd();
+
+                // Convertir resultados a JSON
+                var lista = resultado.Rows.Cast<DataRow>()
+                    .Select(fila => resultado.Columns.Cast<DataColumn>()
+                        .ToDictionary(col => col.ColumnName, col => fila[col] == DBNull.Value ? null : fila[col]))
+                    .ToList();
+
+                return Ok(lista);
+            }
+        }
+        catch (Exception ex)
+        {
+            controlConexion.CerrarBd();
+            return StatusCode(500, $"Error al ejecutar el SP: {ex.Message}");
+        }
+    }
 
 }
 }
+
+// Fin de la clase EntidadesController
