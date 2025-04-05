@@ -714,6 +714,7 @@ namespace IndicadoresApi.Controllers
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}"); // Retorna un error 500 si ocurre una excepción.
             }
         }
+        
     /// <summary>
     /// Ejecuta un procedimiento almacenado con los parámetros proporcionados.
     /// </summary>
@@ -828,6 +829,7 @@ namespace IndicadoresApi.Controllers
     }
 
 }
+
 }
 
 // Fin de la clase EntidadesController

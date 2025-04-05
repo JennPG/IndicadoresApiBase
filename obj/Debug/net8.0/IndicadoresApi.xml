@@ -103,5 +103,15 @@
             <response code="400">El nombre de la tabla o el nombre de la clave están vacíos.</response>
             <response code="500">Error interno del servidor.</response>
         </member>
+        <member name="M:IndicadoresApi.Controllers.EntidadesController.EjecutarProcedimientoAlmacenado(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Ejecuta un procedimiento almacenado con los parámetros proporcionados.
+            </summary>
+            <param name="parametrosSP">Diccionario con el nombre del SP y sus parámetros.</param>
+            <returns>Los resultados del procedimiento almacenado o un mensaje de error.</returns>
+            <response code="200">Devuelve los resultados del procedimiento almacenado.</response>
+            <response code="400">El nombre del SP no está especificado o los parámetros son inválidos.</response>
+            <response code="500">Error al ejecutar el procedimiento almacenado.</response>
+        </member>
     </members>
 </doc>
