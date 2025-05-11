@@ -1,40 +1,48 @@
-//Program.cs
-using System; // Agrega esta línea para usar TimeSpan
-using Microsoft.AspNetCore.Builder; // Importa el espacio de nombres necesario para construir y configurar la aplicación web.
-using Microsoft.Extensions.DependencyInjection; // Importa el espacio de nombres necesario para configurar los servicios de la aplicación.
-using Microsoft.Extensions.Hosting; // Importa el espacio de nombres necesario para trabajar con diferentes entornos (desarrollo, producción, etc.).
-using IndicadoresApi.Services; // Importa los servicios personalizados que se utilizarán en la aplicación.
-using Microsoft.OpenApi.Models; // 🔹 Importa el espacio de nombres necesario para habilitar Swagger.
+using IndicadoresApi.Services;
+using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args); // Crea un constructor para configurar la aplicación web ASP.NET Core.
+var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(); // Agrega soporte para controladores MVC, permitiendo manejar solicitudes HTTP a través de acciones en los controladores.
-builder.Services.AddSingleton<ControlConexion>(); // Registra el servicio ControlConexion como singleton, asegurando que haya una única instancia compartida en toda la aplicación.
-builder.Services.AddSingleton<TokenService>(); // Registra el servicio TokenService como singleton, asegurando una única instancia compartida en toda la aplicación.
+builder.Services.AddControllers();
+builder.Services.AddSingleton<ControlConexion>();
+builder.Services.AddSingleton<TokenService>();
 
-builder.Services.AddCors(options => // Configura CORS (Cross-Origin Resource Sharing) para la aplicación.
+// Configuración de CORS mejorada para manejar múltiples puertos y redirecciones
+builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", // Define una política de CORS llamada "AllowAllOrigins".
-        builder => builder.AllowAnyOrigin() // Permite solicitudes desde cualquier origen (dominio).
-                          .AllowAnyMethod() // Permite cualquier método HTTP (GET, POST, etc.).
-                          .AllowAnyHeader()); // Permite cualquier encabezado en las solicitudes.
+    options.AddPolicy("AllowSpecificOrigins",
+        builder => builder
+            // Permitir tanto el origen original como el redirigido
+            .WithOrigins(
+                "https://localhost:7230", // Origen de tu cliente Blazor
+                "http://localhost:7230",  // Versión HTTP por si acaso
+                "https://localhost:7237", // Puerto al que se redirige
+                "http://localhost:7237",  // Versión HTTP del puerto redirigido
+                "http://localhost:3000",  // Puerto original
+                "https://localhost:3000"  // Versión HTTPS del puerto original
+            )
+            .SetIsOriginAllowedToAllowWildcardSubdomains() // Permitir subdominios
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()); // Importante para cookies/auth
 });
 
-builder.Services.AddDistributedMemoryCache(); // Agrega un proveedor de caché distribuida en memoria para almacenar datos de sesión.
-builder.Services.AddSession(options => // Configura el servicio de sesión para la aplicación.
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Establece el tiempo de inactividad de la sesión a 30 minutos.
-    options.Cookie.HttpOnly = true; // Configura la cookie de sesión como HTTPOnly para mayor seguridad.
-    options.Cookie.IsEssential = true; // Marca la cookie de sesión como esencial, necesaria para el funcionamiento de la aplicación.
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; // Para CORS
+    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest; // Flexible para desarrollo
 });
 
-// 🔹 Habilitar Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Api Genérica C#", 
+        Title = "Api Genérica C#",
         Version = "v1",
         Description = "API de prueba con ASP.NET Core y Swagger",
         Contact = new OpenApiContact
@@ -46,30 +54,72 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var app = builder.Build(); // Construye la aplicación con las configuraciones especificadas anteriormente.
+var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) // Verifica si la aplicación está en el entorno de desarrollo.
+// Configuración para desarrollo
+if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage(); // Habilita una página de excepción detallada, útil para depurar errores durante el desarrollo.
-
-    // 🔹 Middleware de Swagger
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Genérica C#");
-        //c.RoutePrefix = string.Empty; // Hace que Swagger esté disponible en la raíz (http://localhost:5266/)
-        c.RoutePrefix = "swagger"; //  Swagger estará en http://localhost:5266/swagger
+        c.RoutePrefix = "swagger";
+    });
+
+    // Importante: En desarrollo, podemos desactivar la redirección HTTPS para evitar problemas con CORS
+    // COMENTAR ESTA LÍNEA si sigue habiendo problemas de redirección
+    // app.UseHttpsRedirection();
+}
+else
+{
+    // En producción mantenemos la redirección HTTPS
+    app.UseHttpsRedirection();
+    app.UseHsts();
+}
+
+// IMPORTANTE: CORS debe estar ANTES de cualquier otro middleware que pudiera generar redirecciones
+app.UseCors("AllowSpecificOrigins");
+
+// Configuración del resto de middleware
+app.UseSession();
+app.UseRouting();
+app.UseAuthorization();
+
+app.MapControllers();
+
+// Middleware especial para depurar CORS en desarrollo
+if (app.Environment.IsDevelopment())
+{
+    app.Use(async (context, next) =>
+    {
+        // Log de información sobre la solicitud para depuración
+        Console.WriteLine($"Solicitud recibida: {context.Request.Method} {context.Request.Path}");
+        Console.WriteLine($"Origen: {context.Request.Headers["Origin"]}");
+
+        // Continuar con la ejecución
+        await next();
+
+        // Log de información sobre la respuesta
+        Console.WriteLine($"Código de estado: {context.Response.StatusCode}");
+
+        // Para solicitudes CORS OPTIONS, asegurarse de que los encabezados estén presentes
+        if (context.Request.Method == "OPTIONS")
+        {
+            if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+            {
+                Console.WriteLine("⚠️ Encabezado Access-Control-Allow-Origin no encontrado en la respuesta");
+
+                // Agregar encabezados CORS manualmente como último recurso
+                context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"].ToString());
+                context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                context.Response.StatusCode = 200;
+            }
+        }
     });
 }
 
-app.UseHttpsRedirection(); // Fuerza la redirección de las solicitudes HTTP a HTTPS para mejorar la seguridad.
-
-app.UseCors("AllowAllOrigins"); // Aplica la política de CORS que permite solicitudes desde cualquier origen.
-app.UseSession(); // Habilita el soporte de sesiones en el middleware de la aplicación.
-app.UseAuthorization(); // Habilita el middleware de autorización, necesario para proteger rutas que requieren autenticación o autorización.
-
-app.MapControllers(); // Configura las rutas de los controladores para manejar las solicitudes HTTP.
-
-app.Run(); // Inicia la aplicación y comienza a escuchar las solicitudes entrantes.
-
+app.Run();
 
